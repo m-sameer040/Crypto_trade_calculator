@@ -1,6 +1,6 @@
 {
   "name": "Crypto Trade Calculator",
-  "short_name": "TradeCalc",
+  "short_name": "Crypto Trade Calculator",
   "start_url": "/Crypto-Trade-Calculator/",
   "display": "standalone",
   "background_color": "#000000",

@@ -4,12 +4,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/Crypto_trade_calculator/manifest.json">
     <link rel="apple-touch-icon" sizes="180x180" href="icon-512.png">
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js")
+      navigator.serviceWorker.register("/Crypto_trade_calculator/service-worker.js")
         .then(() => console.log("Service Worker Registered"))
         .catch(err => console.log("SW registration failed: ", err));
     });
