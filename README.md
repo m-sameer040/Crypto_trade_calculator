@@ -29,7 +29,7 @@ It features keyboard shortcuts (Up, Down, Enter) and ambient lighting effects fo
 
 1. Download or clone this repository:
    ```bash
-   git clone https://github.com/your-username/trade-roi-calculator.git
+   git clone (https://github.com/m-sameer040/Crypto_trade_calculator.git)
 
 2. ## 🚀 Live Demo
 👉 [Crypto Trade Calculator](https://m-sameer040.github.io/Crypto_trade_calculator/)
