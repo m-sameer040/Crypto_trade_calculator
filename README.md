@@ -13,7 +13,7 @@ It features keyboard shortcuts (Up, Down, Enter) and ambient lighting effects fo
 - ⬆️⬇️ Move between fields using **Arrow keys**  
 - 🔢 Press **Enter** to automatically calculate results  
 - 📱 Works on both **Desktop** and **Mobile browsers**  
-- 🌍 Can be deployed as a **Website or PWA (Web App)**  
+- 🌍 Can be deployed as a **Website** 
 
 ---
 
@@ -33,8 +33,6 @@ It features keyboard shortcuts (Up, Down, Enter) and ambient lighting effects fo
 
 2. ## 🚀 Live Demo
 👉 [Crypto Trade Calculator](https://m-sameer040.github.io/Crypto_trade_calculator/)
-
-Now supports **PWA mode** — install it on your mobile or desktop and use it **offline**!
 
 ## 👨‍💻 Author
 **Muhammad Sameer Khan**  
