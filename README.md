@@ -32,7 +32,7 @@ It features keyboard shortcuts (Up, Down, Enter) and ambient lighting effects fo
    git clone https://github.com/your-username/trade-roi-calculator.git
 
 2. ## 🚀 Live Demo
-👉 [Crypto Trade Calculator](https://m-sameer040.github.io/Crypto-Trade-Calculator/)
+👉 [Crypto Trade Calculator](https://m-sameer040.github.io/Crypto_trade_calculator/)
 
 Now supports **PWA mode** — install it on your mobile or desktop and use it **offline**!
 
