@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-512.png">
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("Service Worker Registered"))
+        .catch(err => console.log("SW registration failed: ", err));
+    });
+  }
+</script>
+
+    
+    <title>Trade ROI & Profit Calculator</title>
+
+    <!-- Tailwind CDN (for quick styling) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Ambient glow animation for the outer border */
+        @keyframes glow {
+            0% {
+                box-shadow: 0 0 30px #00ffff, 0 0 60px rgba(0, 255, 255, 0.05);
+                border-color: #00FFFF;
+            }
+
+            25% {
+                box-shadow: 0 0 30px #ff00ff, 0 0 60px rgba(255, 0, 255, 0.05);
+                border-color: #FF00FF;
+            }
+
+            50% {
+                box-shadow: 0 0 30px #00ff00, 0 0 60px rgba(0, 255, 0, 0.05);
+                border-color: #00FF00;
+            }
+
+            75% {
+                box-shadow: 0 0 30px #ffa500, 0 0 60px rgba(255, 165, 0, 0.05);
+                border-color: #FFA500;
+            }
+
+            100% {
+                box-shadow: 0 0 30px #ff5555, 0 0 60px rgba(255, 85, 85, 0.05);
+                border-color: #FF5555;
+            }
+        }
+
+        .ambient-border {
+            border: 6px solid #00FFFF;
+            border-radius: 18px;
+            animation: glow 2.0s linear infinite;
+            background-color: rgba(15, 15, 15, 0.4);
+
+            /* 🧊 Blur background (with Safari support) */
+            -webkit-backdrop-filter: blur(6px);
+            /* for Safari and iOS Safari */
+            backdrop-filter: blur(6px);
+            /* for Chrome, Firefox, Edge */
+        }
+
+        /* soft inner glow for main panel */
+        .panel {
+            background: linear-gradient(180deg, rgba(30, 30, 30, 0.95), rgba(24, 24, 24, 0.95));
+            border-radius: 12px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02), 0 8px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        /* small focus outline for inputs */
+        input:focus,
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.18);
+            border-color: rgba(59, 130, 246, 0.6);
+        }
+
+        /* button hover glow */
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.12);
+        }
+
+        /* responsive width */
+        .calc-width {
+            max-width: 720px;
+            width: 96%;
+        }
+
+    
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center bg-[#0f0f10] p-6">
+
+    <div class="ambient-border calc-width">
+        <div class="panel p-6 md:p-10">
+            <!-- Heading -->
+            <div class="text-center mb-6">
+                <h1 id="title" class="text-3xl md:text-4xl font-extrabold text-cyan-400">💹 Trade ROI & Profit
+                    Calculator</h1>
+                <p class="text-sm text-gray-400 mt-2">Enter trade params and press Enter or Calculate</p>
+            </div>
+
+            <!-- Inputs -->
+            <form id="calcForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-sm text-gray-300">Entry Price</label>
+                    <input id="entry" title="entry" inputmode="decimal" type="text"
+                        class="w-full mt-1 p-3 bg-[#111] text-white rounded-md border border-gray-700" />
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-300">Target Price</label>
+                    <input id="target" title="target" inputmode="decimal" type="text"
+                        class="w-full mt-1 p-3 bg-[#111] text-white rounded-md border border-gray-700" />
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-300">Stop Loss</label>
+                    <input id="stop" title="stop" inputmode="decimal" type="text"
+                        class="w-full mt-1 p-3 bg-[#111] text-white rounded-md border border-gray-700" />
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-300">Leverage (x)</label>
+                    <input id="leverage" title="leverage" inputmode="decimal" type="text"
+                        class="w-full mt-1 p-3 bg-[#111] text-white rounded-md border border-gray-700" />
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-300">Margin ($)</label>
+                    <input id="margin" title="margin" inputmode="decimal" type="text"
+                        class="w-full mt-1 p-3 bg-[#111] text-white rounded-md border border-gray-700" />
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-300">Position Type</label>
+                    <select id="position" title="select"
+                        class="w-full mt-1 p-3 bg-[#111] text-white rounded-md border border-gray-700">
+                        <option>Long</option>
+                        <option>Short</option>
+                    </select>
+                </div>
+
+                <!-- Buttons full width on small screens -->
+                <div class="md:col-span-2 flex gap-3 items-center mt-2">
+                    <button id="calcBtn" type="button"
+                        class="btn-glow flex-1 py-3 px-5 text-white bg-green-600 rounded-md font-semibold hover:brightness-110">Calculate</button>
+                    <button id="clearBtn" type="button"
+                        class="py-3 px-5 text-white bg-red-600 rounded-md font-semibold hover:brightness-110">Clear</button>
+                </div>
+            </form>
+
+            <!-- Result box -->
+            <div id="result"
+                class="mt-6 bg-[#101010] text-white rounded-md p-4 font-mono text-sm leading-relaxed min-h-[140px]">
+                Result will appear here...
+            </div>
+
+            <div class="mt-4 text-right text-xs text-gray-400">Tip: Use ↑ ↓ to move between fields. Press Enter to
+                calculate.</div>
+        </div>
+    </div>
+
+    <!-- JS Logic -->
+    <script>
+        // helper
+        const $ = id => document.getElementById(id);
+        const fields = ['entry', 'target', 'stop', 'leverage', 'margin', 'position'].map(id => $(id));
+        const calcBtn = $('calcBtn'), clearBtn = $('clearBtn'), resultBox = $('result');
+
+        function toNumber(v) {
+            if (v === null || v === undefined) return NaN;
+            // allow comma or space
+            return Number(String(v).replace(/,/g, '').trim());
+        }
+
+        function formatMoney(n) {
+            return Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function calculate() {
+            const entry = toNumber($('entry').value);
+            const target = toNumber($('target').value);
+            const stop_loss = toNumber($('stop').value);
+            const leverage = toNumber($('leverage').value);
+            const margin = toNumber($('margin').value);
+            const position = $('position').value.toLowerCase();
+
+            if (![entry, target, stop_loss, leverage, margin].every(v => !isNaN(v))) {
+                resultBox.innerText = 'Please enter valid numeric values in all fields.';
+                return;
+            }
+            if (!['long', 'short'].includes(position)) {
+                resultBox.innerText = "Position must be 'Long' or 'Short'.";
+                return;
+            }
+
+            let price_move, roi, profit_in_dollars, stop_move, roi_on_stop, loss_in_dollars;
+
+            if (position === 'long') {
+                price_move = ((target - entry) / entry) * 100;
+                roi = price_move * leverage;
+                profit_in_dollars = (roi / 100) * margin;
+
+                stop_move = ((stop_loss - entry) / entry) * 100;
+                roi_on_stop = stop_move * leverage;
+                loss_in_dollars = Math.abs((roi_on_stop / 100) * margin);
+            } else {
+                price_move = ((entry - target) / entry) * 100;
+                roi = price_move * leverage;
+                profit_in_dollars = (roi / 100) * margin;
+
+                stop_move = ((entry - stop_loss) / entry) * 100;
+                roi_on_stop = stop_move * leverage;
+                loss_in_dollars = Math.abs((roi_on_stop / 100) * margin);
+            }
+
+            // Render result (colored text via simple emojis)
+            const roiSign = roi >= 0 ? '📈' : '📉';
+            const profitSign = roi >= 0 ? '🟢' : '🔴';
+
+            resultBox.innerHTML =
+                `<div style="white-space:pre-line;">
+=== Trade Summary ===
+Position Type       :   ${position.toUpperCase()}
+Price Move %        :   ${price_move.toFixed(2)}%
+ROI %               :   ${roi.toFixed(2)}% ${roiSign}
+Profit in Dollars   :   ${profitSign} $${formatMoney(profit_in_dollars)}
+Stop Loss ROI %     :   ${roi_on_stop.toFixed(2)}%
+Loss in Dollars     :   🔴 -$${formatMoney(loss_in_dollars)}
+</div>`;
+        }
+
+        // click handlers
+        calcBtn.addEventListener('click', calculate);
+        clearBtn.addEventListener('click', () => {
+            fields.forEach(f => { if (f.tagName === 'SELECT') f.selectedIndex = 0; else f.value = ''; });
+            resultBox.innerText = 'Result will appear here...';
+            fields[0].focus();
+        });
+
+        // keyboard navigation: up/down to move, Enter to calculate
+        fields.forEach((el, idx) => {
+            el.addEventListener('keydown', (ev) => {
+                if (ev.key === 'ArrowDown') {
+                    ev.preventDefault();
+                    const next = fields[(idx + 1) % fields.length];
+                    next.focus();
+                } else if (ev.key === 'ArrowUp') {
+                    ev.preventDefault();
+                    const prev = fields[(idx - 1 + fields.length) % fields.length];
+                    prev.focus();
+                } else if (ev.key === 'Enter') {
+                    ev.preventDefault();
+                    // If it's not the last field, we still calculate (user asked that Enter triggers calculation from any field)
+                    calculate();
+                }
+            });
+        });
+
+        // make responsive: focus first
+        window.addEventListener('load', () => fields[0].focus());
+    </script>
+</body>
+
+</html>
